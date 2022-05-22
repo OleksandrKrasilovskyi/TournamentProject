@@ -21,5 +21,6 @@ public class TournamentProjectApplication {
     @EventListener(ContextRefreshedEvent.class)
     public void runApp() throws IOException {
         console.startApp();
+        console.testApp();
     }
 }

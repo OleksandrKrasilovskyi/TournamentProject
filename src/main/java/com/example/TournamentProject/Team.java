@@ -3,12 +3,14 @@ package com.example.TournamentProject;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
+import lombok.ToString;
 
-@EntityScan
 @AllArgsConstructor
 @Getter
 @Setter
+@ToString
 public class Team {
-    String teamName, capitanName, coachName;
+    private String teamName;
+    private String capitanName;
+    private String coachName;
 }
