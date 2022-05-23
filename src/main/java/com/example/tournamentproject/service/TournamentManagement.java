@@ -1,29 +1,25 @@
-package com.example.TournamentProject;
+package com.example.tournamentproject.service;
 
+import com.example.tournamentproject.dto.TournamentAnotherObject;
+import com.example.tournamentproject.entity.Team;
+import lombok.Getter;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class TournamentManagement {
+    @Getter
+    private final Map<String, TournamentAnotherObject> tournamentAnotherObjectMap = new HashMap<>();
 
-    public void getTournamentName() {
-        System.out.println("Enter tournament name:");
-    }
-
-    public String createTournamentName() {
-        String tournamentName = null;
-        try {
-            BufferedReader buffer = new BufferedReader(new InputStreamReader(System.in));
-            tournamentName = buffer.readLine();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return tournamentName;
+    public void createTournamentAnotherObjectMap(String tournamentName) {
+        tournamentAnotherObjectMap.put(tournamentName, new TournamentAnotherObject());
     }
 
     public Team pickWinner(Team home, Team guest) {
@@ -34,8 +30,7 @@ public class TournamentManagement {
         String guestString;
         List<Team> nextRoundList = new ArrayList<>();
 
-        try {
-            BufferedReader buffer = new BufferedReader(new InputStreamReader(System.in));
+        try (BufferedReader buffer = new BufferedReader(new InputStreamReader(System.in))) {
 
             List<Team> thisGame = new ArrayList<>();
             thisGame.add(home);
@@ -48,25 +43,25 @@ public class TournamentManagement {
 
             if (homeInt > guestInt) {
                 nextRoundList.add(home);
-            } else nextRoundList.add(guest);
-
-
+            } else {
+                nextRoundList.add(guest);
+            }
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Error in 'TournamentManagement, pickWinner'" + e);
         }
         System.out.println("Result: " + home.toString() + ", " + guest.toString() + ", " + homeInt + ", " + guestInt);
 
         return nextRoundList.get(0);
     }
 
-    public ArrayList<Team> processBracket(ArrayList<Team> thisRound) {
-        ArrayList<Team> returnBracket = new ArrayList<>();
+    public List<Team> processBracket(List<Team> currentRound) {
+        List<Team> returnBracket = new ArrayList<>();
 
         int start = 0;
-        int end = (thisRound.size() - 1);
+        int end = (currentRound.size() - 1);
 
         while (start < end) {
-            Team winner = pickWinner(thisRound.get(start), thisRound.get(end));
+            Team winner = pickWinner(currentRound.get(start), currentRound.get(end));
             returnBracket.add(winner);
 
             start++;

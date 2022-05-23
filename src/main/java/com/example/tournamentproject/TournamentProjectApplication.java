@@ -1,5 +1,6 @@
-package com.example.TournamentProject;
+package com.example.tournamentproject;
 
+import com.example.tournamentproject.service.Console;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -21,6 +22,5 @@ public class TournamentProjectApplication {
     @EventListener(ContextRefreshedEvent.class)
     public void runApp() throws IOException {
         console.startApp();
-        console.testApp();
     }
 }

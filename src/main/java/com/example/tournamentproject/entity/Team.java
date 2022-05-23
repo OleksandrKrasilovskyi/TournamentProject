@@ -1,4 +1,4 @@
-package com.example.TournamentProject;
+package com.example.tournamentproject.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
