@@ -50,15 +50,19 @@ public class Console {
 
         for (int i = 1; i <= numberTeams; i++) {
             System.out.println("Введіть назву команди, її капітана та тренера :)");
-            teamManagement.createTeam(buffer.readLine(), buffer.readLine(), buffer.readLine(), tournamentName);
+            String teamName = buffer.readLine();
+            String capitanName = buffer.readLine();
+            String coachName = buffer.readLine();
+            teamManagement.createTeam(teamName, capitanName, coachName, tournamentName);
+            System.out.println("Команду додано :)");
             System.out.println("Команду додано :)");
         }
         return something.getListTeam();
     }
 
-    public boolean acceptableTeamNumber(int x) {
+    public boolean acceptableTeamNumber(int teamSizeCounter) {
         for (int i = 2; i < 5000; i++) {
-            if (Math.pow(2, i) == x) {
+            if (Math.pow(2, i) == teamSizeCounter) {
                 return true;
             }
         }
