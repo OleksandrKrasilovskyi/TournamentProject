@@ -1,6 +1,6 @@
 package com.example.tournamentproject.service;
 
-import com.example.tournamentproject.dto.TournamentAnotherObject;
+import com.example.tournamentproject.entity.Match;
 import com.example.tournamentproject.entity.Team;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -26,21 +27,64 @@ public class Console {
         final var tournamentName = createTournamentName();
         tournamentManagement.createTournamentAnotherObjectMap(tournamentName);
         final var teamList = createTeamsData(tournamentName);
-        Collections.shuffle(teamList);
-        buildMatchesForSpecificTournament(teamList ,tournamentName);
+        final var matchList = buildMatchesForSpecificTournament(teamList, tournamentName);
+        printUpComingMatchesForSpecificTournament(tournamentName);
         //TODO Вивести юзеру всі можливі наступні варіанти
-        System.out.println("");
+        final var newRoundListTeams = chooseMatchAndPickWinner(matchList);
+        final var playNextRoundListMatches = playNextRound(newRoundListTeams, tournamentName);
+
     }
 
-    private void buildMatchesForSpecificTournament(List<Team> teamList, String tournamentName) {
+    private List<Match> buildMatchesForSpecificTournament(List<Team> teamList, String tournamentName) throws IOException {
         //TODO Придумати логіку, яка буде створювати матчі
+        final var tournamentAnotherObjectMap = tournamentManagement.getTournamentAnotherObjectMap();
+        final var tournamentAnotherObject = tournamentAnotherObjectMap.get(tournamentName);
+        Collections.shuffle(teamList);
+        for (int i = 0; i < teamList.size() / 2; i++) {
+            tournamentManagement.createMatch("Round 1/" + (teamList.size() / 2), teamList.get(i + i).getTeamName(), teamList.get(i + (i + 1)).getTeamName(), null, tournamentName);
+        }
+        return tournamentAnotherObject.getListMatch();
     }
 
-    private void printUpComingMatchesForSpecificTournament(String tournamentName){
+    public List<String> chooseMatchAndPickWinner(List<Match> matchList) throws IOException {
+        System.out.println("Choose the match would you like to play (the countdown starts at 0)");
+        List<String> nextRoundListOfMatches = new ArrayList<>();
+        for (int i = 0; i < matchList.size(); i++) {
+            if (buffer.readLine().equalsIgnoreCase(String.format("%d", i))) {
+                System.out.println("Enter team name winner");
+            }
+            if (buffer.readLine().equalsIgnoreCase(matchList.get(i).getTeam_1())) {
+                nextRoundListOfMatches.add(matchList.get(i).getTeam_1());
+            } else nextRoundListOfMatches.add(matchList.get(i).getTeam_2());
+        }
+        return nextRoundListOfMatches;
+    }
+
+    public List<Match> playNextRound(List<String> nextRoundListOfMatches, String tournamentName) {
+        final var tournamentAnotherObjectMap = tournamentManagement.getTournamentAnotherObjectMap();
+        final var tournamentAnotherObject = tournamentAnotherObjectMap.get(tournamentName);
+        Collections.shuffle(nextRoundListOfMatches);
+        for (int i = 0; i < nextRoundListOfMatches.size() / 2; i++) {
+            tournamentManagement.createMatch("Round 1/" + nextRoundListOfMatches.size() / 2, nextRoundListOfMatches.get(i + i),
+                    nextRoundListOfMatches.get(i + (i + 1)), null, tournamentName);
+        }
+        return tournamentAnotherObject.getListMatch();
+    }
+
+    private void printUpComingMatchesForSpecificTournament(String tournamentName) throws IOException {
         //TODO Дає можливість подивитися "предстоящие" матчі
+        final var tournamentAnotherObjectMap = tournamentManagement.getTournamentAnotherObjectMap();
+        final var tournamentAnotherObject = tournamentAnotherObjectMap.get(tournamentName);
+        System.out.println("If you want view upcoming matches print 'show'");
+        final var view = buffer.readLine().equalsIgnoreCase("show");
+        if (view) {
+            for (int i = 0; i < tournamentAnotherObject.getListMatch().size(); i++) {
+                System.out.println(tournamentAnotherObject.getListMatch().get(i) + "\n");
+            }
+        }
     }
 
-    private void playTournament(String tournamentName){
+    private void playTournament(String tournamentName) throws IOException {
 
     }
 
@@ -49,34 +93,29 @@ public class Console {
     }
 
     public List<Team> createTeamsData(String tournamentName) throws IOException {
-        System.out.println("Enter at least 4 teams:");
+        int numTeams = 0;
         final var tournamentAnotherObjectMap = tournamentManagement.getTournamentAnotherObjectMap();
         final var tournamentAnotherObject = tournamentAnotherObjectMap.get(tournamentName);
-        boolean condition = true;
-        while (condition) {
+        while (!validateTeamSize(numTeams) || numTeams == 1) {
+            System.out.println("Enter set teams (4, 8, 16, 32, 64, etc)");
+            numTeams = Integer.parseInt(buffer.readLine());
+        }
+        System.out.println("Tournament have " + numTeams + " teams");
+        for (int i = 1; i <= numTeams; i++) {
+            System.out.println("Enter teamName, coachName and capitanName of " + i + " team");
             teamManagement.createTeam(buffer.readLine(), buffer.readLine(), buffer.readLine(), tournamentName);
-
-            System.out.println("Enter new team names or enter 'stop' in order to finish");
-            validateTeamSize(tournamentAnotherObject);
-            final var stop = buffer.readLine().equalsIgnoreCase("stop");
-            if (stop) {
-                condition = false;
-            }
+            System.out.println("Team " + i + " is complete");
         }
         return tournamentAnotherObject.getListTeam();
     }
 
-    private void validateTeamSize(TournamentAnotherObject tournamentAnotherObject) {
+    private static boolean validateTeamSize(int numTeams) {
         //TODO Переписати валідацію (працює некоректно, поправити)
-        for (int j = 0; j < tournamentAnotherObject.getListTeam().size(); j ++) {
-            if (tournamentAnotherObject.getListTeam().size() != Math.pow(2, j)) {
-                System.out.println("Insufficient number of teams to draw the tournament bracket");
-            } else if (tournamentAnotherObject.getListTeam().size() < 4) {
-                System.out.println("Enter at least 4 teams");
+        for (int j = 2; j < (Integer.MAX_VALUE / 1000); j++) {
+            if (Math.pow(2, j) == numTeams) {
+                return true;
             }
         }
+        return false;
     }
 }
-
-
-
