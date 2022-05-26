@@ -36,7 +36,6 @@ public class Console {
         printUpComingMatchesForSpecificTournament(tournamentName);
 
         //TODO Вивести юзеру всі можливі наступні варіанти
-        System.out.println("");
     }
 
     private List<Match> buildMatchesForSpecificTournament(List<Team> teamList, String tournamentName) {
@@ -82,6 +81,7 @@ public class Console {
         for (int i = 1; i <= numTeams; i++) {
             System.out.println("Введите название команды,тренера и капитана");
             teamManagement.createTeam(buffer.readLine(), buffer.readLine(), buffer.readLine(), tournamentName);
+            System.out.println("Команда создана");
             System.out.println("Команда создана");
         }
         return tournamentAnotherObject.getListTeam();
