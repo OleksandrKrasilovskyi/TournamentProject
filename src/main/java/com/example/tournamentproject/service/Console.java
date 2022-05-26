@@ -1,6 +1,5 @@
 package com.example.tournamentproject.service;
 
-import com.example.tournamentproject.dto.TournamentAnotherObject;
 import com.example.tournamentproject.entity.Team;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,62 +19,93 @@ public class Console {
     private static final BufferedReader buffer = new BufferedReader(new InputStreamReader(System.in));
 
     public void startApp() throws IOException {
-        System.out.println("Welcome to Bracket Tournament");
-        System.out.println("------------------------------");
-        System.out.println("Enter tournament name: ");
+        System.out.println("Вітаю в Tournament Bracket!");
         final var tournamentName = createTournamentName();
-        tournamentManagement.createTournamentAnotherObjectMap(tournamentName);
+        tournamentManagement.createOurMap(tournamentName);
         final var teamList = createTeamsData(tournamentName);
         Collections.shuffle(teamList);
-        buildMatchesForSpecificTournament(teamList ,tournamentName);
+        buildMatchesForSpecificTournament(teamList, tournamentName);
+        printUpComingMatchesForSpecificTournament(tournamentName);
+
         //TODO Вивести юзеру всі можливі наступні варіанти
         System.out.println("");
+    }
+
+    public String createTournamentName() throws IOException {
+        System.out.println("Введіть назву турнірної сітки :)");
+        return buffer.readLine();
+    }
+
+
+    public List<Team> createTeamsData(String tournamentName) throws IOException {
+
+        final var tournamentSomethingMap = tournamentManagement.getTournamentSomethingMap();
+        final var something = tournamentSomethingMap.get(tournamentName);
+        int numberTeams = 0;
+        while (!acceptableTeamNumber(numberTeams) || numberTeams == 1) {
+            System.out.println("Введіть кількість команд :) Наприклад: 4, 8, 16, ..., n².");
+            numberTeams = Integer.parseInt(buffer.readLine());
+        }
+        System.out.println("В турнірі бере участь така кількість команд: " + numberTeams);
+
+        for (int i = 1; i <= numberTeams; i++) {
+            System.out.println("Введіть назву команди, її капітана та тренера :)");
+            teamManagement.createTeam(buffer.readLine(), buffer.readLine(), buffer.readLine(), tournamentName);
+            System.out.println("Команду додано :)");
+        }
+        return something.getListTeam();
+    }
+
+    public boolean acceptableTeamNumber(int x) {
+        for (int i = 2; i < 5000; i++) {
+            if (Math.pow(2, i) == x) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void buildMatchesForSpecificTournament(List<Team> teamList, String tournamentName) {
         //TODO Придумати логіку, яка буде створювати матчі
     }
 
-    private void printUpComingMatchesForSpecificTournament(String tournamentName){
+    private void printUpComingMatchesForSpecificTournament(String tournamentName) throws IOException {
         //TODO Дає можливість подивитися "предстоящие" матчі
-    }
-
-    private void playTournament(String tournamentName){
-
-    }
-
-    public String createTournamentName() throws IOException {
-        return buffer.readLine();
-    }
-
-    public List<Team> createTeamsData(String tournamentName) throws IOException {
-        System.out.println("Enter at least 4 teams:");
-        final var tournamentAnotherObjectMap = tournamentManagement.getTournamentAnotherObjectMap();
-        final var tournamentAnotherObject = tournamentAnotherObjectMap.get(tournamentName);
-        boolean condition = true;
-        while (condition) {
-            teamManagement.createTeam(buffer.readLine(), buffer.readLine(), buffer.readLine(), tournamentName);
-
-            System.out.println("Enter new team names or enter 'stop' in order to finish");
-            validateTeamSize(tournamentAnotherObject);
-            final var stop = buffer.readLine().equalsIgnoreCase("stop");
-            if (stop) {
-                condition = false;
-            }
-        }
-        return tournamentAnotherObject.getListTeam();
-    }
-
-    private void validateTeamSize(TournamentAnotherObject tournamentAnotherObject) {
-        //TODO Переписати валідацію (працює некоректно, поправити)
-        for (int j = 0; j < tournamentAnotherObject.getListTeam().size(); j ++) {
-            if (tournamentAnotherObject.getListTeam().size() != Math.pow(2, j)) {
-                System.out.println("Insufficient number of teams to draw the tournament bracket");
-            } else if (tournamentAnotherObject.getListTeam().size() < 4) {
-                System.out.println("Enter at least 4 teams");
+        final var tournamentSomethingMap = tournamentManagement.getTournamentSomethingMap();
+        final var something = tournamentSomethingMap.get(tournamentName);
+        System.out.println("Для перегляду сітки наступних матчів введіть 'show'");
+        final var view = buffer.readLine().equalsIgnoreCase("show");
+        if (view) {
+            for (int i = 0; i < something.getListMatch().size(); i++) {
+                System.out.println(something.getListMatch().get(i) + "\n");
             }
         }
     }
+
+    private void playTournament(String tournamentName) {
+
+    }
+
+//    public void acceptableTeamNumber(int x) {
+//        System.out.println("Введіть кількість команд :) В кінці напишіть 'Готово'");
+//        for (int i = 0; i <= 4; i++) {
+//            if (x != Math.pow(2, i)) {
+//                System.out.println("Кількість команд має бути 4, 8, 16, ..., n².");
+//            } else if (x < 4) {
+//                System.out.println("Будь ласка, введіть не менше ніж 4 команди");
+//            }
+//        }
+//    }
+
+//    private void validateTeamSize(TournamentSomething tournamentSomething) {
+//        //TODO Переписати валідацію (працює некоректно, поправити)
+//        for (int j = 0; j < tournamentSomething.getListTeam().size(); j++) {
+//            if (tournamentSomething.getListTeam().size() != Math.pow(2, j)) {
+//                System.out.println("Кількість команд має бути 4, 8, 16, ..., n².");
+//            } else if (tournamentSomething.getListTeam().size() < 4) {
+//            System.out.println("Будь ласка, введіть не менше ніж 4 команди");
+//        }
+//    }
 }
 
 

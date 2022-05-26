@@ -11,8 +11,7 @@ public class CSVExportService {
 
     public void saveInTXTFile(String tournamentName) {
         var tournamentInTXTFile = tournamentName + ".txt";
-        final var tournamentAnotherObjectMap = tournamentManagement.getTournamentAnotherObjectMap();
-        final var tournamentAnotherObject = tournamentAnotherObjectMap.get(tournamentName);
+        final var tournamentAnotherObjectMap = tournamentManagement.getTournamentSomethingMap();   final var tournamentAnotherObject = tournamentAnotherObjectMap.get(tournamentName);
         final var matchList = tournamentAnotherObject.getListMatch();
         //TODO Реалізувати запис матчів у файл
     }

@@ -11,7 +11,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public class TournamentAnotherObject {
+public class TournamentSomething {
     private List<Team> listTeam = new ArrayList<>();
     private List<Match> listMatch = new ArrayList<>();
 }
