@@ -1,4 +1,4 @@
-package com.example.TournamentProject;
+package com.example.tournamentproject;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
