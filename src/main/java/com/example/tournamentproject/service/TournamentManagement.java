@@ -1,69 +1,33 @@
 package com.example.tournamentproject.service;
 
-import com.example.tournamentproject.dto.TournamentAnotherObject;
-import com.example.tournamentproject.entity.Match;
-import lombok.Getter;
+import com.example.tournamentproject.entity.Tournament;
+import com.example.tournamentproject.repository.TournamentRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.HashSet;
 
 @Service
+@AllArgsConstructor
 public class TournamentManagement {
-    @Getter
-    private final Map<String, TournamentAnotherObject> tournamentAnotherObjectMap = new HashMap<>();
 
-    public void createTournamentAnotherObjectMap(String tournamentName) {
-        tournamentAnotherObjectMap.put(tournamentName, new TournamentAnotherObject());
+    private final TournamentRepository tournamentRepository;
+
+    @Transactional
+    public void createTournament(String tournamentName) {
+        final var tournament = new Tournament();
+        tournament.setMatches(new HashSet<>());
+        tournament.setTeams(new HashSet<>());
+        tournament.setTournamentName(tournamentName);
+
+        tournamentRepository.save(tournament);
     }
 
     public void createMatch(String round, String team1, String team2, String score, String tournamentName) {
-        Match match = new Match(round, team1, team2, score);
-        final var tournamentAnotherObjectMap = getTournamentAnotherObjectMap();
-        final var tournamentAnotherObject = tournamentAnotherObjectMap.get(tournamentName);
-        tournamentAnotherObject.getListMatch().add(match);
+//        final var match = new Match(round, team1, team2, score);
+//        final var tournamentAnotherObject = tournamentAnotherObjectMap.get(tournamentName);
+//        tournamentAnotherObject.getListMatch().add(match);
     }
 
-//    public Team pickWinner(Team home, Team guest) throws IOException {
-//
-//        int homeInt = 0;
-//        int guestInt = 0;
-//        String homeString;
-//        String guestString;
-//        List<Team> nextRoundList = new ArrayList<>();
-//
-//        List<Team> thisGame = new ArrayList<>();
-//        thisGame.add(home);
-//        thisGame.add(guest);
-//
-//        homeString = buffer.readLine();
-//        homeInt = Integer.parseInt(homeString);
-//        guestString = buffer.readLine();
-//        guestInt = Integer.parseInt(guestString);
-//
-//        if (homeInt > guestInt) {
-//            nextRoundList.add(home);
-//        } else {
-//            nextRoundList.add(guest);
-//        }
-//
-//        System.out.println("Result: " + home.toString() + ", " + guest.toString() + ", " + homeInt + ", " + guestInt);
-//        return nextRoundList.get(0);
-//    }
-//
-//    public List<Team> processBracket(List<Team> teamList) throws IOException {
-//        List<Team> returnBracket = new ArrayList<>();
-//
-//        int start = 0;
-//        int end = (teamList.size() - 1);
-//
-//        while (start < end) {
-//            Team winner = pickWinner(teamList.get(start), teamList.get(end));
-//            returnBracket.add(winner);
-//
-//            start++;
-//            end--;
-//        }
-//        return returnBracket;
-//    }
 }

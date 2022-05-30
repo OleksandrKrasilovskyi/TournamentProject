@@ -1,17 +1,38 @@
 package com.example.tournamentproject.entity;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
+import org.springframework.lang.NonNull;
 
-@AllArgsConstructor
+import javax.persistence.*;
+
 @Getter
 @Setter
-@ToString
+@Entity
+@Table(name = "match")
 public class Match {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "match_id")
+    private Long id;
+
+    @Column(nullable = false, updatable = false, length = 20)
+    @NonNull
     private String round;
-    private String Team_1;
-    private String Team_2;
+
+    @Column(name = "first_team", length = 100)
+    private String firstTeam;
+
+    @Column(name = "second_team", length = 100)
+    private String secondTeam;
+
+    @Column
     private String score;
+
+    //TODO learn about lazy and eager
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "tournament_id", nullable = false)
+    private Tournament tournament;
+
 }
